@@ -33,16 +33,17 @@ export class WaveFactory {
 
   public create() {
     const newWaveArray = this.propagate();
+    const wave = new Wave(newWaveArray, this.time);
 
     this.preWaveArray = this.waveArray.clone();
     this.waveArray = newWaveArray.clone();
     this.time += this.grid.dt;
 
-    return new Wave(newWaveArray);
+    return wave;
   }
 
   public inputGauss(x0: number, y0: number, rad: number) {
-    const x = linspace(0, this.grid.width, this.grid.widthNum()).reshape<
+    const x = linspace(0, this.grid.height, this.grid.widthNum()).reshape<
       number[]
     >(1, -1);
 
