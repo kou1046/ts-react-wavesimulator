@@ -6,9 +6,11 @@ import {
   rightShift,
   bottomShift,
 } from "../../utils/shift";
+import { tile } from "../../utils/tile";
 import { Grid } from "../grids/Grid";
 import { Wave } from "./Wave";
 import { Walls } from "../walls/Walls";
+import { linspace } from "../../utils/linspace";
 
 export class WaveFactory {
   private readonly grid: Grid;
@@ -39,6 +41,26 @@ export class WaveFactory {
     return new Wave(newWaveArray);
   }
 
+  public inputGauss(x0: number, y0: number, rad: number) {
+    const x = linspace(0, this.grid.width, this.grid.widthNum()).reshape<
+      number[]
+    >(1, -1);
+
+    const y = linspace(0, this.grid.height, this.grid.heightNum()).reshape<
+      number[]
+    >(-1, 1);
+
+    const xs = tile(x, [this.grid.heightNum() - 1, 0]);
+    const ys = tile(y, [0, this.grid.widthNum() - 1]);
+
+    const inputWaveArray = calculateInputWaveElement(xs, x0, rad).multiply(
+      calculateInputWaveElement(ys, y0, rad)
+    );
+
+    this.waveArray = this.waveArray.add(inputWaveArray);
+    this.preWaveArray = this.preWaveArray.add(inputWaveArray);
+  }
+
   private propagate(): nj.NdArray<number[]> {
     const vT = topShift(this.waveArray);
     const vB = bottomShift(this.waveArray);
@@ -58,3 +80,19 @@ export class WaveFactory {
     return newWaveArray;
   }
 }
+
+const calculateInputWaveElement = (
+  array: nj.NdArray<number[]>,
+  init: number,
+  rad: number
+): nj.NdArray<number[]> => {
+  const retArray = nj.exp(
+    array
+      .subtract(init)
+      .pow(2)
+      .multiply(-1)
+      .multiply(rad ** 2)
+  );
+
+  return retArray;
+};
