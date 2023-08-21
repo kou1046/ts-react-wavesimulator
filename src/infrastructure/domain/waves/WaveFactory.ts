@@ -12,23 +12,30 @@ import { Walls } from "../walls/Walls";
 
 export class WaveFactory {
   private readonly grid: Grid;
-  private readonly walls: Walls;
+  private readonly walls: Walls | null;
   private waveArray: nj.NdArray<number[]>;
   private preWaveArray: nj.NdArray<number[]>;
+  private time: number;
 
-  constructor(grid: Grid, walls: Walls) {
+  constructor(grid: Grid, walls: Walls | null = null) {
     this.grid = grid;
     this.walls = walls;
     this.waveArray = nj
       .zeros<number[]>(grid.widthNum() * grid.heightNum())
-      .reshape(grid.widthNum(), grid.heightNum());
+      .reshape(grid.heightNum(), grid.widthNum());
     this.preWaveArray = nj
       .zeros<number[]>(grid.widthNum() * grid.heightNum())
-      .reshape(grid.widthNum(), grid.heightNum());
+      .reshape(grid.heightNum(), grid.widthNum());
+    this.time = 0;
   }
 
   public create() {
     const newWaveArray = this.propagate();
+
+    this.preWaveArray = this.waveArray.clone();
+    this.waveArray = newWaveArray.clone();
+    this.time += this.grid.dt;
+
     return new Wave(newWaveArray);
   }
 

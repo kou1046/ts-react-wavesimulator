@@ -1,8 +1,8 @@
 export class Grid {
-  private readonly width: number;
-  private readonly height: number;
-  private readonly h: number;
-  private readonly dt: number;
+  public readonly width: number;
+  public readonly height: number;
+  public readonly h: number;
+  public readonly dt: number;
 
   constructor(width: number, height: number, h: number, dt: number) {
     this.width = width;
