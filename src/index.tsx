@@ -9,25 +9,53 @@ import { diricreCornerFactory } from "./infrastructure/domain/corners/DiricreCor
 import { Wave } from "./infrastructure/domain/waves/Wave";
 import { WaveFactory } from "./infrastructure/domain/waves/WaveFactory";
 
-const WIDTH = 1.0;
-const HEIGHT = 1.0;
-const H = 0.04; // 空間刻み幅 (解像度)
+const WIDTH = 3.0;
+const HEIGHT = 3.0;
+const H = 0.05; // 空間刻み幅 (解像度)
 const DT = 0.01; //　更新時間幅
 const RAD = 10; // ガウス入力の半径 (入力の鋭さ)
 
-const topWall = new DiricreWall([0.5, 1.0], [1.0, 1.0], "bottom");
-const rightWall = new DiricreWall([1.0, 1.0], [1.0, 0.5], "left");
-const bottomWall = new DiricreWall([1.0, 0.5], [0.5, 0.5], "top");
-const leftWall = new DiricreWall([0.5, 0.5], [0.5, 1.0], "right");
+const reflectBottmWall = new DiricreWall(
+  [0.0, HEIGHT],
+  [WIDTH / 2, HEIGHT],
+  "bottom"
+);
+const reflectLeftWall = new DiricreWall(
+  [WIDTH / 2, HEIGHT],
+  [WIDTH / 2, HEIGHT / 2],
+  "left"
+);
+
+const reflecBottomWall2 = new DiricreWall(
+  [WIDTH / 2, HEIGHT / 2],
+  [WIDTH, HEIGHT / 2],
+  "bottom"
+);
+
+const reflectLeftWall2 = new DiricreWall(
+  [WIDTH, HEIGHT / 2],
+  [WIDTH, 0],
+  "left"
+);
+
+const reflectTopWall = new DiricreWall([WIDTH, 0], [0, 0], "top");
+const reflectRightWall2 = new DiricreWall([0, 0], [0, HEIGHT], "right");
 
 const walls = new Walls(
-  [topWall, rightWall, bottomWall, leftWall],
+  [
+    reflectBottmWall,
+    reflectLeftWall,
+    reflecBottomWall2,
+    reflectLeftWall2,
+    reflectTopWall,
+    reflectRightWall2,
+  ],
   diricreCornerFactory
 );
 
 const grid = new Grid(WIDTH, HEIGHT, H, DT);
-const waveFactory = new WaveFactory(grid, walls);
-waveFactory.inputGauss(0, HEIGHT / 2, RAD);
+const waveFactory = new WaveFactory(grid, [walls]);
+waveFactory.inputGauss(WIDTH / 2, HEIGHT / 3, RAD);
 
 export default function Home() {
   const [wave, setWave] = useState<Wave>(waveFactory.create());

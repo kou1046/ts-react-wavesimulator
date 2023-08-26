@@ -14,13 +14,13 @@ import { linspace } from "../../utils/linspace";
 
 export class WaveFactory {
   private readonly grid: Grid;
-  private readonly walls: Walls | null;
+  private readonly wallsCollection: Walls[] | null;
   private wave: Wave;
   private preWave: Wave;
 
-  constructor(grid: Grid, walls: Walls | null = null) {
+  constructor(grid: Grid, walls: Walls[] | null = null) {
     this.grid = grid;
-    this.walls = walls;
+    this.wallsCollection = walls;
     this.wave = new Wave(
       nj
         .zeros<number[]>(grid.widthNum() * grid.heightNum())
@@ -40,9 +40,11 @@ export class WaveFactory {
   public create() {
     const newWaveArray = this.propagate();
 
-    if (this.walls) {
-      // inplace newWaveArray
-      this.walls.reflect(newWaveArray, this.wave, this.preWave);
+    if (this.wallsCollection) {
+      this.wallsCollection.map((walls) => {
+        // inplace newWaveArray
+        walls.reflect(newWaveArray, this.wave, this.preWave);
+      });
     }
 
     this.preWave = new Wave(this.wave.value, this.wave.time, this.grid);
