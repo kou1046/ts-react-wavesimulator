@@ -28,5 +28,9 @@
     "numjs": "^0.16.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "scripts": {
+    "dev": "webpack server",
+    "build": "webpack --mode production"
   }
 }
