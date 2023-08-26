@@ -3,6 +3,7 @@ import nj from "numjs";
 import { Wall } from "./Wall";
 import { Grid } from "../grids/Grid";
 import { ICornerFactory } from "../corners/ICornerFactory";
+import { Wave } from "../waves/Wave";
 
 export class Walls {
   private readonly value;
@@ -13,9 +14,8 @@ export class Walls {
   }
 
   public reflect(
-    inplacedArray: nj.NdArray<number>,
-    preArray: nj.NdArray<number>,
-    grid: Grid,
-    time: number
+    inplacedArray: nj.NdArray<number[]>,
+    wave: Wave,
+    preWave: Wave
   ): void {}
 }

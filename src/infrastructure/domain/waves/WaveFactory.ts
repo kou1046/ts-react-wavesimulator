@@ -15,31 +15,44 @@ import { linspace } from "../../utils/linspace";
 export class WaveFactory {
   private readonly grid: Grid;
   private readonly walls: Walls | null;
-  private waveArray: nj.NdArray<number[]>;
-  private preWaveArray: nj.NdArray<number[]>;
-  private time: number;
+  private wave: Wave;
+  private preWave: Wave;
 
   constructor(grid: Grid, walls: Walls | null = null) {
     this.grid = grid;
     this.walls = walls;
-    this.waveArray = nj
-      .zeros<number[]>(grid.widthNum() * grid.heightNum())
-      .reshape(grid.heightNum(), grid.widthNum());
-    this.preWaveArray = nj
-      .zeros<number[]>(grid.widthNum() * grid.heightNum())
-      .reshape(grid.heightNum(), grid.widthNum());
-    this.time = 0;
+    this.wave = new Wave(
+      nj
+        .zeros<number[]>(grid.widthNum() * grid.heightNum())
+        .reshape(grid.heightNum(), grid.widthNum()),
+      0,
+      grid
+    );
+    this.preWave = new Wave(
+      nj
+        .zeros<number[]>(grid.widthNum() * grid.heightNum())
+        .reshape(grid.heightNum(), grid.widthNum()),
+      0,
+      grid
+    );
   }
 
   public create() {
     const newWaveArray = this.propagate();
-    const wave = new Wave(newWaveArray, this.time);
 
-    this.preWaveArray = this.waveArray.clone();
-    this.waveArray = newWaveArray.clone();
-    this.time += this.grid.dt;
+    if (this.walls) {
+      // inplace newWaveArray
+      this.walls.reflect(newWaveArray, this.wave, this.preWave);
+    }
 
-    return wave;
+    this.preWave = new Wave(this.wave.value, this.wave.time, this.grid);
+    this.wave = new Wave(
+      newWaveArray,
+      this.wave.time + this.grid.dt,
+      this.grid
+    );
+
+    return this.wave;
   }
 
   public inputGauss(x0: number, y0: number, rad: number) {
@@ -58,20 +71,20 @@ export class WaveFactory {
       calculateInputWaveElement(ys, y0, rad)
     );
 
-    this.waveArray = this.waveArray.add(inputWaveArray);
-    this.preWaveArray = this.preWaveArray.add(inputWaveArray);
+    this.wave.add(inputWaveArray);
+    this.preWave.add(inputWaveArray);
   }
 
   private propagate(): nj.NdArray<number[]> {
-    const vT = topShift(this.waveArray);
-    const vB = bottomShift(this.waveArray);
-    const vR = rightShift(this.waveArray);
-    const vL = leftShift(this.waveArray);
+    const vT = topShift(this.wave.value);
+    const vB = bottomShift(this.wave.value);
+    const vR = rightShift(this.wave.value);
+    const vL = leftShift(this.wave.value);
 
-    const v1 = this.waveArray.multiply(2).subtract(this.preWaveArray);
+    const v1 = this.wave.value.multiply(2).subtract(this.preWave.value);
 
     const v2_1 = vL.add(vR).add(vB).add(vT);
-    const v2_2 = this.waveArray.multiply(4);
+    const v2_2 = this.wave.value.multiply(4);
     const v2_3 = v2_1.subtract(v2_2);
 
     const v2 = v2_3.multiply(this.grid.alpha());

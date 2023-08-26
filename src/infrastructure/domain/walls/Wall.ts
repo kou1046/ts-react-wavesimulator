@@ -2,6 +2,7 @@ import nj from "numjs";
 
 import { Point } from "../points/Point";
 import { Grid } from "../grids/Grid";
+import { Wave } from "../waves/Wave";
 
 export abstract class Wall {
   private readonly start: Point;
@@ -21,9 +22,8 @@ export abstract class Wall {
   }
 
   public abstract reflect(
-    inplacedArray: nj.NdArray<number>,
-    preArray: nj.NdArray<number>,
-    grid: Grid,
-    time: number
+    inplacedArray: nj.NdArray<number[]>,
+    wave: Wave,
+    preWave: Wave
   ): void;
 }
