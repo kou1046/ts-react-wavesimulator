@@ -7,7 +7,12 @@ export abstract class Corner {
     this.x = x;
     this.y = y;
   }
-  abstract reflect(x: number, y: number, wave: Wave, preWave: Wave): number;
+  public abstract reflect(
+    x: number,
+    y: number,
+    wave: Wave,
+    preWave: Wave
+  ): number;
 }
 
 export abstract class RightTopCorner extends Corner {}
