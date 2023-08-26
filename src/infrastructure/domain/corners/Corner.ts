@@ -1,6 +1,4 @@
-import nj from "numjs";
-
-import { Grid } from "../grids/Grid";
+import { Wave } from "../waves/Wave";
 
 export abstract class Corner {
   private readonly x: number;
@@ -9,9 +7,10 @@ export abstract class Corner {
     this.x = x;
     this.y = y;
   }
-  abstract reflect(
-    inplacedArray: nj.NdArray<number>,
-    grid: Grid,
-    time: number
-  ): void;
+  abstract reflect(x: number, y: number, wave: Wave, preWave: Wave): number;
 }
+
+export abstract class RightTopCorner extends Corner {}
+export abstract class RightBottomCorner extends Corner {}
+export abstract class LeftTopCorner extends Corner {}
+export abstract class LeftBottomCorner extends Corner {}
