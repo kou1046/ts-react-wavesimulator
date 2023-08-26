@@ -48,8 +48,9 @@ export abstract class Wall {
   }
 
   public abstract reflect(
-    inplacedArray: nj.NdArray<number[]>,
+    x: number,
+    y: number,
     wave: Wave,
     preWave: Wave
-  ): void;
+  ): number;
 }
