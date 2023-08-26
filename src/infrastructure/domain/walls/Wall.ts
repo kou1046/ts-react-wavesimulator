@@ -9,9 +9,13 @@ export abstract class Wall {
   private readonly end: Point;
   public readonly reflectDirection: ReflectDirection;
 
-  constructor(start: Point, end: Point, reflectDirection: ReflectDirection) {
-    this.start = start;
-    this.end = end;
+  constructor(
+    start: [number, number],
+    end: [number, number],
+    reflectDirection: ReflectDirection
+  ) {
+    this.start = new Point(...start);
+    this.end = new Point(...end);
     this.reflectDirection = reflectDirection;
   }
 
