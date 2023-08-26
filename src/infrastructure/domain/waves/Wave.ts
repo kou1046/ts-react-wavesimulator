@@ -28,6 +28,19 @@ export class Wave {
     return this._value;
   }
 
+  public get(x: number, y: number): number {
+    const [xMaxIndex, yMaxIndex] = this._value.shape.map((v) => v - 1);
+    if (x > xMaxIndex) {
+      x = xMaxIndex;
+    }
+
+    if (x > yMaxIndex) {
+      y = yMaxIndex;
+    }
+
+    return this._value.get(x, y) as unknown as number;
+  }
+
   public add(value: nj.NdArray<number[]>): void {
     this._value = this.value.add(value);
   }
