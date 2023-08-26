@@ -92,10 +92,9 @@ export class Walls {
     if (nextCorner) {
       const setValue = nextCorner.reflect(xCell, endYCell, wave, preWave);
       inplacedArray.set(xCell, endYCell, setValue);
-      endYCell -= 1;
     }
 
-    for (const yCell of range(startYCell, endYCell)) {
+    for (const yCell of range(startYCell, endYCell + 1)) {
       const setValue = wall.reflect(xCell, yCell, wave, preWave);
       inplacedArray.set(xCell, yCell, setValue);
     }
@@ -122,10 +121,9 @@ export class Walls {
     if (nextCorner) {
       const setValue = nextCorner.reflect(endXCell, yCell, wave, preWave);
       inplacedArray.set(endXCell, yCell, setValue);
-      endXCell -= 1;
     }
 
-    for (const xCell of range(startXCell, endXCell)) {
+    for (const xCell of range(startXCell, endXCell + 1)) {
       const setValue = wall.reflect(xCell, yCell, wave, preWave);
       inplacedArray.set(xCell, yCell, setValue);
     }
