@@ -29,15 +29,6 @@ export class Wave {
   }
 
   public get(x: number, y: number): number {
-    const [xMaxIndex, yMaxIndex] = this._value.shape.map((v) => v - 1);
-    if (x > xMaxIndex) {
-      x = xMaxIndex;
-    }
-
-    if (x > yMaxIndex) {
-      y = yMaxIndex;
-    }
-
     return this._value.get(x, y) as unknown as number;
   }
 
