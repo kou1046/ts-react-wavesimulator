@@ -13,6 +13,19 @@ export abstract class Corner {
     wave: Wave,
     preWave: Wave
   ): number;
+
+  public isRightTop(): boolean {
+    return this instanceof RightTopCorner;
+  }
+  public isLeftTop(): boolean {
+    return this instanceof LeftTopCorner;
+  }
+  public isRightBottom(): boolean {
+    return this instanceof RightBottomCorner;
+  }
+  public isLeftBottom(): boolean {
+    return this instanceof LeftBottomCorner;
+  }
 }
 
 export abstract class RightTopCorner extends Corner {}
