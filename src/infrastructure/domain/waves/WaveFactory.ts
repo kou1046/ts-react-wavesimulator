@@ -21,20 +21,10 @@ export class WaveFactory {
   constructor(grid: Grid, walls: Walls[] | null = null) {
     this.grid = grid;
     this.wallsCollection = walls;
-    this.wave = new Wave(
-      nj
-        .zeros<number[]>(grid.widthNum() * grid.heightNum())
-        .reshape(grid.heightNum(), grid.widthNum()),
-      0,
-      grid
-    );
-    this.preWave = new Wave(
-      nj
-        .zeros<number[]>(grid.widthNum() * grid.heightNum())
-        .reshape(grid.heightNum(), grid.widthNum()),
-      0,
-      grid
-    );
+
+    const initTime = 0.0;
+    this.wave = new Wave(grid.generateArray(), initTime, grid);
+    this.preWave = new Wave(grid.generateArray(), initTime, grid);
   }
 
   public create() {
@@ -58,16 +48,16 @@ export class WaveFactory {
   }
 
   public inputGauss(x0: number, y0: number, rad: number) {
-    const x = linspace(0, this.grid.height, this.grid.widthNum()).reshape<
+    const x = linspace(0, this.grid.height, this.grid.rowLength()).reshape<
       number[]
     >(1, -1);
 
-    const y = linspace(0, this.grid.height, this.grid.heightNum()).reshape<
+    const y = linspace(0, this.grid.height, this.grid.colLength()).reshape<
       number[]
     >(-1, 1);
 
-    const xs = tile(x, [this.grid.heightNum() - 1, 0]);
-    const ys = tile(y, [0, this.grid.widthNum() - 1]);
+    const xs = tile(x, [this.grid.colLength() - 1, 0]);
+    const ys = tile(y, [0, this.grid.rowLength() - 1]);
 
     const inputWaveArray = calculateInputWaveElement(xs, x0, rad).multiply(
       calculateInputWaveElement(ys, y0, rad)

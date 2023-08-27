@@ -1,4 +1,6 @@
+import nj from "numjs";
 export class CFLConditionError extends Error {}
+export class ValueError extends Error {}
 
 export class Grid {
   public readonly width: number;
@@ -18,19 +20,52 @@ export class Grid {
     this.dt = dt;
   }
 
+  public generateArray(): nj.NdArray<number[]> {
+    return nj
+      .zeros([this.rowLength() * this.colLength()])
+      .reshape<number[]>(this.rowLength(), this.colLength());
+  }
+
   public alpha(): number {
     return (this.dt / this.h) ** 2;
   }
 
-  public calculateCell(cor: number): number {
+  public calculateXIndex(x: number): number {
+    if (x > this.width) {
+      throw new ValueError();
+    }
+    let xIndex = this.calculateCellNum(x) - 1;
+
+    if (xIndex < 0) {
+      xIndex = 0;
+    }
+
+    return xIndex;
+  }
+
+  public calculateYIndex(y: number): number {
+    if (y > this.height) {
+      throw new ValueError();
+    }
+
+    let yIndex = this.calculateCellNum(y) - 1;
+
+    if (yIndex < 0) {
+      yIndex = 0;
+    }
+
+    return yIndex;
+  }
+
+  public rowLength(): number {
+    return this.calculateCellNum(this.width);
+  }
+
+  public colLength(): number {
+    return this.calculateCellNum(this.height);
+  }
+
+  private calculateCellNum(cor: number) {
     return Math.trunc(cor / this.h);
-  }
-
-  public widthNum(): number {
-    return this.calculateCell(this.width);
-  }
-
-  public heightNum(): number {
-    return this.calculateCell(this.height);
   }
 }

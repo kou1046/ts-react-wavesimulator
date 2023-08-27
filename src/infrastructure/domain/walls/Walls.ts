@@ -79,11 +79,11 @@ export class Walls {
     wave: Wave,
     preWave: Wave
   ): void {
-    const xCell = wave.grid.calculateCell(wall.xs()[0]);
+    const xCell = wave.grid.calculateXIndex(wall.xs()[0]);
     let [startYCell, endYCell] = wall
       .ys()
       .sort()
-      .map((y) => wave.grid.calculateCell(y));
+      .map((y) => wave.grid.calculateYIndex(y));
 
     if (prevCorner) {
       startYCell += 1;
@@ -108,11 +108,11 @@ export class Walls {
     wave: Wave,
     preWave: Wave
   ): void {
-    const yCell = wave.grid.calculateCell(wall.ys()[0]);
+    const yCell = wave.grid.calculateYIndex(wall.ys()[0]);
     let [startXCell, endXCell] = wall
       .xs()
       .sort()
-      .map((x) => wave.grid.calculateCell(x));
+      .map((x) => wave.grid.calculateXIndex(x));
 
     if (prevCorner) {
       startXCell += 1;
