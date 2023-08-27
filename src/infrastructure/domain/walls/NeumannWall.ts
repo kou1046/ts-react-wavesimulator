@@ -3,16 +3,15 @@ import { TopWall, RightWall, BottomWall, LeftWall } from "./Wall";
 
 export class NeumannTopWall extends TopWall {
   public reflect(x: number, y: number, wave: Wave, preWave: Wave): number {
-    const sample =
+    return (
       2 * wave.get(x, y) -
       preWave.get(x, y) +
       wave.grid.alpha() *
         (wave.get(x - 1, y) +
           wave.get(x + 1, y) +
           2 * wave.get(x, y - 1) -
-          4 * wave.get(x, y));
-
-    return sample;
+          4 * wave.get(x, y))
+    );
   }
 }
 
@@ -30,7 +29,7 @@ export class NeumannBottomWall extends BottomWall {
   }
 }
 
-export class NeumannRightWall extends BottomWall {
+export class NeumannRightWall extends RightWall {
   public reflect(x: number, y: number, wave: Wave, preWave: Wave): number {
     return (
       2 * wave.get(x, y) -

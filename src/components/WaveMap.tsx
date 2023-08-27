@@ -40,6 +40,14 @@ export default function WaveMap({ wave }: PropType) {
         [1, "rgba(69, 9, 104, 1)"],
       ],
     },
+    credits: {
+      enabled: false,
+    },
+    plotOptions: {
+      series: {
+        enableMouseTracking: false,
+      },
+    },
     series: [
       {
         name: "Wave",

@@ -22,7 +22,7 @@ export abstract class ICornerFactory {
   public create(wall: Wall, nextWall: Wall): Corner | null {
     if (
       (wall.isTop() && nextWall.isRight() && nextWall.isDownWard()) ||
-      (wall.isRight() && nextWall.isTop() && nextWall.isRightWard())
+      (wall.isRight() && nextWall.isTop() && nextWall.isLeftWard())
     ) {
       /* 
         右上

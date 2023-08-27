@@ -63,8 +63,8 @@ export class WaveFactory {
       calculateInputWaveElement(ys, y0, rad)
     );
 
-    this.wave.add(inputWaveArray);
-    this.preWave.add(inputWaveArray);
+    this.wave.add(inputWaveArray.T);
+    this.preWave.add(inputWaveArray.T);
   }
 
   private propagate(): nj.NdArray<number[]> {
