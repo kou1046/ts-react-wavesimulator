@@ -1,22 +1,13 @@
-import nj from "numjs";
-
 import { Point } from "../points/Point";
 import { Wave } from "../waves/Wave";
-import { ReflectDirection } from "../types/ReflectDirection";
 
 export abstract class Wall {
   private readonly start: Point;
   private readonly end: Point;
-  public readonly reflectDirection: ReflectDirection;
 
-  constructor(
-    start: [number, number],
-    end: [number, number],
-    reflectDirection: ReflectDirection
-  ) {
+  constructor(start: [number, number], end: [number, number]) {
     this.start = new Point(...start);
     this.end = new Point(...end);
-    this.reflectDirection = reflectDirection;
   }
 
   public xs(): [number, number] {
@@ -51,6 +42,22 @@ export abstract class Wall {
     return this.end.y === this.end.y;
   }
 
+  public isRight(): boolean {
+    return this instanceof RightWall;
+  }
+
+  public isLeft(): boolean {
+    return this instanceof LeftWall;
+  }
+
+  public isTop(): boolean {
+    return this instanceof TopWall;
+  }
+
+  public isBottom(): boolean {
+    return this instanceof BottomWall;
+  }
+
   public abstract reflect(
     x: number,
     y: number,
@@ -58,3 +65,8 @@ export abstract class Wall {
     preWave: Wave
   ): number;
 }
+
+export abstract class TopWall extends Wall {}
+export abstract class RightWall extends Wall {}
+export abstract class LeftWall extends Wall {}
+export abstract class BottomWall extends Wall {}

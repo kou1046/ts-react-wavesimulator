@@ -21,12 +21,8 @@ export abstract class ICornerFactory {
 
   public create(wall: Wall, nextWall: Wall): Corner | null {
     if (
-      (wall.reflectDirection === "bottom" &&
-        nextWall.reflectDirection === "left" &&
-        nextWall.isDownWard()) ||
-      (wall.reflectDirection === "left" &&
-        nextWall.reflectDirection === "bottom" &&
-        nextWall.isLeftWard())
+      (wall.isTop() && nextWall.isRight() && nextWall.isDownWard()) ||
+      (wall.isRight() && nextWall.isTop() && nextWall.isRightWard())
     ) {
       /* 
         右上
@@ -36,33 +32,22 @@ export abstract class ICornerFactory {
     }
 
     if (
-      (wall.reflectDirection === "top" &&
-        nextWall.reflectDirection === "right" &&
-        nextWall.isUpWard()) ||
-      (wall.reflectDirection === "right",
-      nextWall.reflectDirection === "top" && nextWall.isRightWard())
+      (wall.isBottom() && nextWall.isLeft() && nextWall.isUpWard()) ||
+      (wall.isLeft() && nextWall.isBottom() && nextWall.isRightWard())
     ) {
       return this.createLeftBottomCorner(wall.xs()[1], wall.ys()[1]);
     }
 
     if (
-      (wall.reflectDirection === "right" &&
-        nextWall.reflectDirection === "bottom" &&
-        nextWall.isRightWard()) ||
-      (wall.reflectDirection === "bottom" &&
-        nextWall.reflectDirection === "right" &&
-        nextWall.isDownWard())
+      (wall.isLeft() && nextWall.isTop() && nextWall.isRightWard()) ||
+      (wall.isTop() && nextWall.isLeft() && nextWall.isDownWard())
     ) {
       return this.createLeftTopCorner(wall.xs()[1], wall.ys()[1]);
     }
 
     if (
-      (wall.reflectDirection === "left" &&
-        nextWall.reflectDirection === "top" &&
-        nextWall.isLeftWard()) ||
-      (wall.reflectDirection === "top" &&
-        nextWall.reflectDirection === "left" &&
-        nextWall.isUpWard())
+      (wall.isRight() && nextWall.isBottom() && nextWall.isLeftWard()) ||
+      (wall.isBottom() && nextWall.isRight() && nextWall.isUpWard())
     ) {
       return this.createRightBottomCorner(wall.xs()[1], wall.ys()[1]);
     }

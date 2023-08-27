@@ -1,7 +1,7 @@
 import { Wave } from "../waves/Wave";
-import { Wall } from "./Wall";
+import { TopWall, RightWall, BottomWall, LeftWall } from "./Wall";
 
-export class NeumannTopWall extends Wall {
+export class NeumannTopWall extends TopWall {
   public reflect(x: number, y: number, wave: Wave, preWave: Wave): number {
     const sample =
       2 * wave.get(x, y) -
@@ -16,7 +16,7 @@ export class NeumannTopWall extends Wall {
   }
 }
 
-export class NeumannBottomWall extends Wall {
+export class NeumannBottomWall extends BottomWall {
   public reflect(x: number, y: number, wave: Wave, preWave: Wave): number {
     return (
       2 * wave.get(x, y) -
@@ -30,7 +30,7 @@ export class NeumannBottomWall extends Wall {
   }
 }
 
-export class NeumannRightWall extends Wall {
+export class NeumannRightWall extends BottomWall {
   public reflect(x: number, y: number, wave: Wave, preWave: Wave): number {
     return (
       2 * wave.get(x, y) -
@@ -44,7 +44,7 @@ export class NeumannRightWall extends Wall {
   }
 }
 
-export class NeumannLeftWall extends Wall {
+export class NeumannLeftWall extends LeftWall {
   public reflect(x: number, y: number, wave: Wave, preWave: Wave): number {
     return (
       2 * wave.get(x, y) -
