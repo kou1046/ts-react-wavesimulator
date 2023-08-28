@@ -15,34 +15,53 @@ import {
   NeumannRightWall,
   NeumannTopWall,
 } from "./infrastructure/domain/walls/NeumannWall";
+import { neumannCornerFactory } from "./infrastructure/domain/corners/NeumannCornerFactory";
 import { Walls } from "./infrastructure/domain/walls/Walls";
-import { diricreCornerFactory } from "./infrastructure/domain/corners/DiricreCornerFactory";
 import { Wave } from "./infrastructure/domain/waves/Wave";
 import { WaveFactory } from "./infrastructure/domain/waves/WaveFactory";
-import { neumannCornerFactory } from "./infrastructure/domain/corners/NeumannCornerFactory";
 
 const WIDTH = 5.0;
 const HEIGHT = 5.0;
-const H = 0.1; // 空間刻み幅 (解像度)
+const H = 0.08; // 空間刻み幅 (解像度)
 const DT = 0.05; //　更新時間幅
 const RAD = 5; // ガウス入力の半径 (入力の鋭さ)
 
-const topWall = new NeumannTopWall([0, HEIGHT], [WIDTH / 2, HEIGHT]);
-const rightWall = new NeumannRightWall(
-  [WIDTH / 2, HEIGHT],
-  [WIDTH / 2, HEIGHT / 2]
-);
+const obstacleXs = [1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2, 1];
+const obstacleYs = [3, 3, 4, 4, 3, 3, 2, 2, 1, 1, 2, 2];
+const wallClasses = [
+  NeumannBottomWall,
+  NeumannRightWall,
+  NeumannBottomWall,
+  NeumannLeftWall,
+  NeumannBottomWall,
+  NeumannLeftWall,
+  NeumannTopWall,
+  NeumannLeftWall,
+  NeumannTopWall,
+  NeumannRightWall,
+  NeumannTopWall,
+  NeumannRightWall,
+];
+const wallCollection = obstacleXs.map((_, i) => {
+  const start: [number, number] = [obstacleXs[i], obstacleYs[i]];
+  const end: [number, number] =
+    i !== obstacleXs.length
+      ? [obstacleXs[i + 1], obstacleYs[i + 1]]
+      : [obstacleXs[0], obstacleYs[0]];
 
-const topWall2 = new NeumannTopWall(
-  [WIDTH / 2, HEIGHT / 2],
-  [WIDTH, HEIGHT / 2]
-);
-const rightWall2 = new NeumannRightWall([WIDTH, HEIGHT / 2], [WIDTH, 0]);
-const bottomWall = new NeumannBottomWall([WIDTH, 0], [0, 0]);
-const leftWall2 = new NeumannLeftWall([0, 0], [0, HEIGHT]);
+  return new wallClasses[i](start, end);
+});
 
-const walls = new Walls(
-  [topWall, rightWall, topWall2, rightWall2, bottomWall, leftWall2],
+console.log(wallCollection);
+
+const walls = new Walls(wallCollection, neumannCornerFactory);
+const walls2 = new Walls(
+  [
+    new NeumannBottomWall([3.5, 4], [4, 4]),
+    new NeumannLeftWall([4, 4], [4, 3.5]),
+    new NeumannTopWall([4, 3.5], [3.5, 3.5]),
+    new NeumannRightWall([3.5, 3.5], [3.5, 4]),
+  ],
   neumannCornerFactory
 );
 
@@ -53,11 +72,11 @@ waveFactory.inputGauss(WIDTH / 2, 0, RAD);
 export default function Home() {
   const [wave, setWave] = useState<Wave>(waveFactory.create());
 
-  useEffect(() => {
-    setInterval(() => {
-      setWave(waveFactory.create());
-    }, 100);
-  }, []);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     setWave(waveFactory.create());
+  //   }, 100);
+  // }, []);
 
   return (
     <>

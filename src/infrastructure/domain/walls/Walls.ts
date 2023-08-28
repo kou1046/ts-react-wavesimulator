@@ -86,12 +86,17 @@ export class Walls {
       .sort()
       .map((y) => wave.grid.calculateYIndex(y));
 
-    if (prevCorner && prevCorner.isRightTop()) endYCell -= 1;
-    if (prevCorner && prevCorner.isLeftBottom()) startYCell += 1;
+    if (prevCorner && (prevCorner.isRightTop() || prevCorner.isLeftTop()))
+      endYCell -= 1;
+    if (prevCorner && (prevCorner.isLeftBottom() || prevCorner.isRightBottom()))
+      startYCell += 1;
 
     if (nextCorner) {
       const cornerXCell = xCell;
-      const cornerYCell = nextCorner.isLeftTop() ? endYCell : startYCell;
+      const cornerYCell =
+        nextCorner.isLeftTop() || nextCorner.isRightTop()
+          ? endYCell
+          : startYCell;
       const setValue = nextCorner.reflect(
         cornerXCell,
         cornerYCell,
@@ -100,17 +105,25 @@ export class Walls {
       );
       inplacedArray.set(cornerXCell, cornerYCell, setValue);
 
-      if (nextCorner.isLeftTop()) {
+      if (nextCorner.isLeftTop() || nextCorner.isLeftBottom()) {
         /* 障害物内部に波が侵入しないようにする処理 */
-        inplacedArray.set(cornerXCell - 1, cornerYCell, 0);
-        inplacedArray.set(cornerXCell, cornerYCell + 1, 0);
+        inplacedArray.set(cornerXCell - 1, cornerYCell, NaN);
+
+        if (nextCorner.isLeftTop())
+          inplacedArray.set(cornerXCell, cornerYCell + 1, NaN);
+        if (nextCorner.isLeftBottom())
+          inplacedArray.set(cornerXCell, cornerYCell - 1, NaN);
 
         endYCell -= 1;
       }
-      if (nextCorner.isRightBottom()) {
+      if (nextCorner.isRightBottom() || nextCorner.isRightTop()) {
         /* 障害物内部に波が侵入しないようにする処理 */
-        inplacedArray.set(cornerXCell + 1, cornerYCell, 0);
-        inplacedArray.set(cornerXCell, cornerYCell - 1, 0);
+        inplacedArray.set(cornerXCell + 1, cornerYCell, NaN);
+
+        if (nextCorner.isRightTop())
+          inplacedArray.set(cornerXCell, cornerYCell + 1, NaN);
+        if (nextCorner.isRightBottom())
+          inplacedArray.set(cornerXCell, cornerYCell - 1, NaN);
 
         startYCell += 1;
       }
@@ -120,9 +133,11 @@ export class Walls {
       const setValue = wall.reflect(xCell, yCell, wave, preWave);
       inplacedArray.set(xCell, yCell, setValue);
 
+      if (yCell === endYCell) break;
+
       /* 障害物内部に波が侵入しないようにする処理 */
-      if (wall.isLeft()) inplacedArray.set(xCell - 1, yCell, 0);
-      if (wall.isRight()) inplacedArray.set(xCell + 1, yCell, 0);
+      if (wall.isLeft()) inplacedArray.set(xCell - 1, yCell, NaN);
+      if (wall.isRight()) inplacedArray.set(xCell + 1, yCell, NaN);
     }
   }
 
@@ -140,25 +155,39 @@ export class Walls {
       .sort()
       .map((x) => wave.grid.calculateXIndex(x));
 
-    if (prevCorner && prevCorner.isLeftTop()) startXCell += 1;
-    if (prevCorner && prevCorner.isRightBottom()) endXCell -= 1;
+    if (prevCorner && (prevCorner.isLeftTop() || prevCorner.isRightTop()))
+      startXCell += 1;
+    if (prevCorner && (prevCorner.isRightBottom() || prevCorner.isLeftBottom()))
+      endXCell -= 1;
 
     if (nextCorner) {
-      const cornerXCell = nextCorner.isLeftBottom() ? startXCell : endXCell;
+      const cornerXCell =
+        nextCorner.isLeftBottom() || nextCorner.isLeftTop()
+          ? startXCell
+          : endXCell;
       const cornerYcell = yCell;
       const setValue = nextCorner.reflect(cornerXCell, yCell, wave, preWave);
       inplacedArray.set(cornerXCell, cornerYcell, setValue);
-      if (nextCorner.isLeftBottom()) {
+
+      if (nextCorner.isLeftBottom() || nextCorner.isLeftTop()) {
         /* 障害物内部に波が侵入しないようにする処理*/
-        inplacedArray.set(cornerXCell, cornerYcell - 1, 0);
-        inplacedArray.set(cornerXCell - 1, cornerYcell, 0);
+        inplacedArray.set(cornerXCell - 1, cornerYcell, NaN);
+
+        if (nextCorner.isLeftBottom())
+          inplacedArray.set(cornerXCell, cornerYcell - 1, NaN);
+        if (nextCorner.isLeftTop())
+          inplacedArray.set(cornerXCell, cornerYcell + 1, NaN);
 
         startXCell += 1;
       }
-      if (nextCorner.isRightTop()) {
+
+      if (nextCorner.isRightTop() || nextCorner.isRightBottom()) {
         /* 障害物内部に波が侵入しないようにする処理*/
-        inplacedArray.set(cornerXCell, cornerYcell + 1, 0);
-        inplacedArray.set(cornerXCell + 1, cornerYcell, 0);
+        inplacedArray.set(cornerXCell + 1, cornerYcell, NaN);
+        if (nextCorner.isRightTop())
+          inplacedArray.set(cornerXCell, cornerYcell + 1, NaN);
+        if (nextCorner.isRightBottom())
+          inplacedArray.set(cornerXCell, cornerYcell - 1, NaN);
 
         endXCell -= 1;
       }
@@ -168,9 +197,11 @@ export class Walls {
       const setValue = wall.reflect(xCell, yCell, wave, preWave);
       inplacedArray.set(xCell, yCell, setValue);
 
+      if (xCell === endXCell) break;
+
       /* 障害物内部に波が侵入しないようにする処理*/
-      if (wall.isBottom()) inplacedArray.set(xCell, yCell - 1, 0);
-      if (wall.isTop()) inplacedArray.set(xCell, yCell + 1, 0);
+      if (wall.isBottom()) inplacedArray.set(xCell, yCell - 1, NaN);
+      if (wall.isTop()) inplacedArray.set(xCell, yCell + 1, NaN);
     }
   }
 }
