@@ -35,11 +35,11 @@ export abstract class Wall {
   }
 
   public isVertical(): boolean {
-    return this.start.x === this.start.x;
+    return this.start.x === this.end.x;
   }
 
   public isHorizontal(): boolean {
-    return this.end.y === this.end.y;
+    return this.start.y === this.end.y;
   }
 
   public isRight(): boolean {

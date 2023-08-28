@@ -29,6 +29,7 @@ export class Walls {
       const [prevWall, wall, nextWall] = walls;
       const prevCorner = this.cornerFactory.create(prevWall, wall);
       const nextCorner = this.cornerFactory.create(wall, nextWall);
+
       this.reflectOne(
         wall,
         prevCorner,
@@ -85,27 +86,43 @@ export class Walls {
       .sort()
       .map((y) => wave.grid.calculateYIndex(y));
 
-    if (prevCorner) {
-      startYCell += 1;
-    }
+    if (prevCorner && prevCorner.isRightTop()) endYCell -= 1;
+    if (prevCorner && prevCorner.isLeftBottom()) startYCell += 1;
 
     if (nextCorner) {
-      const setValue = nextCorner.reflect(xCell, endYCell, wave, preWave);
-      inplacedArray.set(xCell, endYCell, setValue);
-      endYCell -= 1;
+      const cornerXCell = xCell;
+      const cornerYCell = nextCorner.isLeftTop() ? endYCell : startYCell;
+      const setValue = nextCorner.reflect(
+        cornerXCell,
+        cornerYCell,
+        wave,
+        preWave
+      );
+      inplacedArray.set(cornerXCell, cornerYCell, setValue);
+
+      if (nextCorner.isLeftTop()) {
+        /* 障害物内部に波が侵入しないようにする処理 */
+        inplacedArray.set(cornerXCell - 1, cornerYCell, 0);
+        inplacedArray.set(cornerXCell, cornerYCell + 1, 0);
+
+        endYCell -= 1;
+      }
+      if (nextCorner.isRightBottom()) {
+        /* 障害物内部に波が侵入しないようにする処理 */
+        inplacedArray.set(cornerXCell + 1, cornerYCell, 0);
+        inplacedArray.set(cornerXCell, cornerYCell - 1, 0);
+
+        startYCell += 1;
+      }
     }
 
     for (const yCell of range(startYCell, endYCell + 1)) {
       const setValue = wall.reflect(xCell, yCell, wave, preWave);
       inplacedArray.set(xCell, yCell, setValue);
 
-      // 障害物内部に波が侵入しないようにする処理
-      if (wall.isLeft() && xCell > 0) {
-        inplacedArray.set(xCell - 1, yCell, 0);
-      }
-      if (wall.isRight() && xCell + 1 < wave.grid.rowLength()) {
-        inplacedArray.set(xCell + 1, yCell + 1, 0);
-      }
+      /* 障害物内部に波が侵入しないようにする処理 */
+      if (wall.isLeft()) inplacedArray.set(xCell - 1, yCell, 0);
+      if (wall.isRight()) inplacedArray.set(xCell + 1, yCell, 0);
     }
   }
 
@@ -123,27 +140,37 @@ export class Walls {
       .sort()
       .map((x) => wave.grid.calculateXIndex(x));
 
-    if (prevCorner) {
-      startXCell += 1;
-    }
+    if (prevCorner && prevCorner.isLeftTop()) startXCell += 1;
+    if (prevCorner && prevCorner.isRightBottom()) endXCell -= 1;
 
     if (nextCorner) {
-      const setValue = nextCorner.reflect(endXCell, yCell, wave, preWave);
-      inplacedArray.set(endXCell, yCell, setValue);
-      endXCell -= 1;
+      const cornerXCell = nextCorner.isLeftBottom() ? startXCell : endXCell;
+      const cornerYcell = yCell;
+      const setValue = nextCorner.reflect(cornerXCell, yCell, wave, preWave);
+      inplacedArray.set(cornerXCell, cornerYcell, setValue);
+      if (nextCorner.isLeftBottom()) {
+        /* 障害物内部に波が侵入しないようにする処理*/
+        inplacedArray.set(cornerXCell, cornerYcell - 1, 0);
+        inplacedArray.set(cornerXCell - 1, cornerYcell, 0);
+
+        startXCell += 1;
+      }
+      if (nextCorner.isRightTop()) {
+        /* 障害物内部に波が侵入しないようにする処理*/
+        inplacedArray.set(cornerXCell, cornerYcell + 1, 0);
+        inplacedArray.set(cornerXCell + 1, cornerYcell, 0);
+
+        endXCell -= 1;
+      }
     }
 
     for (const xCell of range(startXCell, endXCell + 1)) {
       const setValue = wall.reflect(xCell, yCell, wave, preWave);
       inplacedArray.set(xCell, yCell, setValue);
 
-      // 障害物内部に波が侵入しないようにする処理
-      if (wall.isBottom() && yCell > 0) {
-        inplacedArray.set(xCell, yCell - 1, 0);
-      }
-      if (wall.isTop() && yCell + 1 < wave.grid.colLength()) {
-        inplacedArray.set(xCell, yCell + 1, 0);
-      }
+      /* 障害物内部に波が侵入しないようにする処理*/
+      if (wall.isBottom()) inplacedArray.set(xCell, yCell - 1, 0);
+      if (wall.isTop()) inplacedArray.set(xCell, yCell + 1, 0);
     }
   }
 }
